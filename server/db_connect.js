@@ -8,7 +8,7 @@ const options = {
     headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
-        "X-Hasura-Access-Key": "bXlsadzdXBlc35nNlY3JldGtl678eWlueW91c09nNlcnZpY=-02VzaXIK"
+        "X-Hasura-Access-Key": "secret"
     }
 };
 
