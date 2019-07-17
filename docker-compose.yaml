@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+    - db_data:/var/lib/postgresql/data
+  graphql-engine:
+    image: hasura/graphql-engine:v1.0.0-alpha33
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## uncomment next line to set an access key
+      HASURA_GRAPHQL_ACCESS_KEY: bXlsadzdXBlc35nNlY3JldGtl678eWlueW91c09nNlcnZpY=-02VzaXIK
+      #HASURA_GRAPHQL_JWT_SECRET: '{"type":"RS256", "key": "-----BEGIN CERTIFICATE-----\nMIIC+zCCAeOgAwIBAgIJfV2UjS/jhmsVMA0GCSqGSIb3DQEBCwUAMBsxGTAXBgNV\nBAMTEG1haWxpby5hdXRoMC5jb20wHhcNMTkwMTA1MTMzNzU2WhcNMzIwOTEzMTMz\nNzU2WjAbMRkwFwYDVQQDExBtYWlsaW8uYXV0aDAuY29tMIIBIjANBgkqhkiG9w0B\nAQEFAAOCAQ8AMIIBCgKCAQEAxPZJzh9WT9x6AAX7kR4fer8+xL68zM/kh/355Wi0\nK/TJa3WjmDD6R1re1ib/+xVvG58vts+76B9qKIhWOe50hMX41DAHM+/YVrlqUVZM\ngV5APOnBpGVu4En++v5kzR1R5+yrGpxRZogtiSoKznpNPRFwyp5pqkSGnUM+zwN/\nc26oLObryjWxOoRojs5jufPdMWK922dTtg31EQUJOmYfEPnCCauoZDwhwAoEtoPW\nwzlB2O7ar/SbbAdBAWVq195Q9A6CcC8poAwLk14JtTHf1JavAQiz4qotUoxuRcbo\nT8586S0j6DVzVN3SNWNB2wo5fY5ePkXdxXapjvlmcyejHQIDAQABo0IwQDAPBgNV\nHRMBAf8EBTADAQH/MB0GA1UdDgQWBBS9RPv3l+ksSD8J+psb7h/jDErjTzAOBgNV\nHQ8BAf8EBAMCAoQwDQYJKoZIhvcNAQELBQADggEBAAgushMxhkh22UcoylglQuoe\nZAOmfcAynQBBLEuK/N48gsVnhtX56tjVo2ac9KmeRymd2DlwZIJmadtizRsg7q1P\n8S9wHoW37jzRzA8urzrYT+LUK9S4OxwMkh5T3bMo6RzFfz39/E1+QWZbLM8troER\nmgEx7lV1azqssPkdnldcB+/jEqgYXsF3FCDccXp4lD6uXpDIWHMee/I7PbdZ+J69\nrZVoH6mlLXw3Y956GX702lZok3q4OpszQQOU7aXFTZWdDY3/gEvcPz9ClRISu6cW\n6x09n0lYEinDrL/DHVJTnJfTcq89BM/7YRVVzdYNwX8b5CJxUNLQaK80jVr+C18=\n-----END CERTIFICATE-----"}'
+volumes:
+  db_data:

@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>chat</title>
+
+</head>
+
+<body>
+    <div class="container" method="POST">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a id="welcome" class="navbar-brand" href="/users">Welcome</a>
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            </ul>
+            <a href="/logout"><button class="btn btn-danger" type="submit">Logout</button></a>
+        </nav>
+        <br/><br/><br/>
+        <b>Chat</b><br/><br/>
+        <ul id="message" class="list-group">
+        </ul>
+        <form name="contact">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Message>></span>
+                </div>
+                <input id="m" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                <button type="submit" name="submit" class="btn btn-primary" id="send">Send</button>
+            </div>
+        </form>
+    </div>
+    </br>
+    </br>
+    </br>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        var socket = io();
+
+        function timeConverter(UNIX_timestamp) {
+            var a = new Date(UNIX_timestamp * 1000);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var year = a.getFullYear();
+            var month = months[a.getMonth()];
+            var date = a.getDate();
+            var hour = a.getHours();
+            var min = a.getMinutes();
+            var sec = a.getSeconds();
+            var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+            return time;
+        }
+        window.onload = function() {
+            $('#welcome').html("Welcome  " + localStorage.getItem('username'));
+            var obj = {
+                from: localStorage.getItem('username'),
+                to: window.location.hash.slice(1)
+            };
+            socket.emit('send', obj, function(msg) {
+                //alert(msg);
+                //$('#message').append('<li class="list-group-item-primary"><b>' + msg[i].user + ':</b>' + msg[i].message + '</li>');
+            });
+            $.post("/chat", {
+                "user": window.location.hash.slice(1)
+            }, function(msg) {
+
+                for (var i = 0; i < msg.length; i++) {
+
+                    var value = timeConverter(msg[i].time);
+                    var localuser = localStorage.getItem('username');
+                    if (msg[i].user == localuser) {
+                        $('#message').append('<li class="list-group-item list-group-item-dark"><b>YOU : </b>&nbsp;&nbsp;&nbsp;&nbsp;' + msg[i].message + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="badge badge-pill badge-dark">  ' + value + '</span></li></br>');
+
+                    } else {
+                        $('#message').append('<li class="list-group-item"><b>' + msg[i].user + ' : </b>&nbsp;&nbsp;&nbsp;&nbsp;' + msg[i].message + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="badge badge-pill badge-dark">  ' + value + '</span></li></br>');
+
+                    }
+                }
+                window.scrollTo(0, document.querySelector("#message").scrollHeight);
+            });
+
+        };
+
+        $(function() {
+
+
+            $("#send").click(function(e) {
+                e.preventDefault();
+                var obj = {
+                    from: localStorage.getItem('username'),
+                    to: window.location.hash.slice(1),
+                    msg: $("#m").val()
+                };
+                console.log(obj);
+                socket.emit('send', obj, function(msg) {
+                    //alert(msg);
+                    //$('#message').append('<li class="list-group-item-primary"><b>' + msg[i].user + ':</b>' + msg[i].message + '</li>');
+                });
+            });
+
+            console.log('Connected to Server');
+
+            socket.on('receive', function(msg) {
+
+                var localuser = localStorage.getItem('username');
+                if (msg.user == localuser) {
+                    $('#message').append('<li class="list-group-item list-group-item-dark"><b>YOU: </b>&nbsp;&nbsp;&nbsp;&nbsp;' + msg.message + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="badge badge-pill badge-dark">  ' + timeConverter(msg.time) + '</span></li></br>');
+
+                } else {
+                    $('#message').append('<li class="list-group-item"><b>' + msg.user + ' : </b>&nbsp;&nbsp;&nbsp;&nbsp;' + msg.message + ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="badge badge-pill badge-dark">  ' + timeConverter(msg.time) + '</span></li></br>');
+
+                }
+                window.scrollTo(0, document.querySelector("#message").scrollHeight);
+
+            });
+        });
+    </script>
+</body>
+
+</html>
