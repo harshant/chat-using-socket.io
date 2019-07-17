@@ -18,7 +18,7 @@ const {
     PORT = 3000,
         SESS_NAME = 'sid',
         SESS_LIFETIME = 1000 * 60 * 60 * 4,
-        SESS_SECRET = 'c3VwZX/aerlY3Jld34GF0eW91cnN<?lcn56pY2Vz899aXIK'
+        SESS_SECRET = 'secret'
 
 } = process.env;
 
